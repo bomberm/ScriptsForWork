@@ -5,19 +5,21 @@ import re
 def process(imageLinks):
 	with open('tempFile', 'r') as f:
 		for line in f:
+			image = ""
 			if re.search('<title>', line):
 				tweet = line.split(':', 1)[0]
 				tweet = tweet[13:-11]
 			elif re.search('og:image"', line):
 				image = line.split("content=")[1]
-				image = image[1:-9]
-			elif re.search("og:image:user_generated", line):
-				imageLinks.write(image+'\n')
+				image = image[1:-3]
 			elif re.search('og:description', line):
 				line = line.strip()
 				line=line[42:-2]
 				tweet += ": "+line.replace('&quot;','')+'\n'
 				return tweet
+			if image != "":
+				imageLinks.write(image+'\n')
+			
 try:
 	sys.argv[1]
 except IndexError:
@@ -36,8 +38,10 @@ else:
 #Scrape images
 	with open('images', 'r') as f:
 		for line in f:
+			line = line.split(":large")[0]
 			print line
-			os.system('wget '+line.rstrip())
+			if not re.search('profile_images', line):
+				os.system('wget '+line.rstrip())
 
 #Create output file
 	output = open(sys.argv[1]+"_Results", 'w+')
@@ -46,4 +50,4 @@ else:
 	output.writelines(results)
 	output.close()
 	os.system('rm tempFile')
-	os.system('rm images')
+	#os.system('rm images')
