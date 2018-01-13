@@ -50,4 +50,4 @@ else:
 	output.writelines(results)
 	output.close()
 	os.system('rm tempFile')
-	#os.system('rm images')
+	os.system('rm images')
