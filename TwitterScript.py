@@ -4,6 +4,7 @@ import re
 
 def process(imageLinks):
 	with open('tempFile', 'r') as f:
+		imageCount = 1
 		for line in f:
 			image = ""
 			if re.search('<title>', line):
@@ -19,6 +20,7 @@ def process(imageLinks):
 				return tweet
 			if image != "":
 				imageLinks.write(image+'\n')
+				imageCount += 1
 			
 try:
 	sys.argv[1]
@@ -31,7 +33,7 @@ else:
 #Retrieve info from twitter
 	with open(sys.argv[1], 'r') as f:
 		for line in f:
-			os.system('wget -O - '+line.rstrip()+' > tempFile')
+			os.system('wget -q -O - '+line.rstrip()+' > tempFile')
 			results.append(process(images))
 
 	images.close()
@@ -39,7 +41,6 @@ else:
 	with open('images', 'r') as f:
 		for line in f:
 			line = line.split(":large")[0]
-			print line
 			if not re.search('profile_images', line):
 				os.system('wget '+line.rstrip())
 
